@@ -1,6 +1,6 @@
 package main
 
-import "fmt"
+import "fmt"	//whatis FMT? Main package?
 
 func main() {
 	fmt.Println("Hello GOLang")
