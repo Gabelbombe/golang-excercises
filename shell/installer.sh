@@ -10,5 +10,5 @@ cd /tmp
 wget 'https://storage.googleapis.com/golang/go1.3.3.darwin-amd64-osx10.8.pkg'
 installer -pkg 'go1.3.3.darwin-amd64-osx10.8.pkg' -target /
 
-export GOROOT="`which go`"
+export GOROOT="/usr/local/go"
 export GOPATH="$HOME/go"
