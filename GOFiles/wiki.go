@@ -34,11 +34,18 @@ func loadPage (title string) (*Page, error) {
 
 
 /**
- * Template renderer
+ * Template renderer: Has error handling
  */
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
-	t, _ := template.ParseFiles("templates/" + tmpl + ".html")
-	t.Execute(w, p)
+	t, err := template.ParseFiles("templates/" + tmpl + ".html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = t.Execute(w, p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 
