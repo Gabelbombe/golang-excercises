@@ -20,18 +20,27 @@ func (p *Page) save() error {
 
 func loadPage (title string) (*Page, error) {
 	filename  := title + ".txt"
-	body, _ := ioutil.ReadFile(filename)			// _ is a blank identifier, essentially assigning error to /dev/null
+	body, _ := ioutil.ReadFile(filename)
 	return &Page {Title: title, Body: body}, nil
 }
 
 func oopsHandler (w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "I love %s...\n", r.URL.Path[1:])
+	fmt.Fprintf(w, "I love men...")
+}
+
+func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+	t, _ := template.ParseFiles("templates/" + tmpl + ".html")
+	t.Execute(w, p)
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Path[len("/view/"):]
-	p, _  := loadPage(title)
-	fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body)
+	title  := r.URL.Path[len("/view/"):]
+	p, err := loadPage(title)
+	if err != nil {
+		http.Redirect(w, r, "/edit" + title, http.StatusFound)
+		return
+	}
+	renderTemplate(w, "view", p)
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request) {
@@ -40,17 +49,14 @@ func editHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		p = &Page{Title: title}
 	}
-	t, _ := template.ParseFiles("/pages/edit.html")
-	t.Execute(w, p)
+	renderTemplate(w, "edit", p)
 }
 
 
 func main() {
 	http.HandleFunc("/", 	  oopsHandler)
-
 	http.HandleFunc("/view/", viewHandler)
 	http.HandleFunc("/edit/", editHandler)
-	http.HandleFunc("/save/", saveHandler)
-
+//	http.HandleFunc("/save/", saveHandler)
 	http.ListenAndServe(":8080", nil)
 }
