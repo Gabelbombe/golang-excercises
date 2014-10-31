@@ -32,8 +32,8 @@ func (p *Page) save() error {
 /**
  * Page Loading
  */
-func loadPage (title string) (*Page, error) {
-	filename  := title + ".txt"
+func loadHandler (title string) (*Page, error) {
+	filename  := "template/" + title + ".html"
 	body, _ := ioutil.ReadFile(filename)
 	return &Page {Title: title, Body: body}, nil
 }
@@ -68,7 +68,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
  */
 func viewHandler(w http.ResponseWriter, r *http.Request) {
 	title  := r.URL.Path[len("/view/"):]
-	p, err := loadPage(title)
+	p, err := loadHandler(title)
 	if err != nil {
 		http.Redirect(w, r, "/edit" + title, http.StatusFound) // Adds 302 if not-found
 		return
@@ -82,7 +82,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request) {
  */
 func editHandler(w http.ResponseWriter, r *http.Request) {
 	title  := r.URL.Path[len("/edit/"):]
-	p, err := loadPage(title)
+	p, err := loadHandler(title)
 	if err != nil {
 		p = &Page{Title: title}
 	}
